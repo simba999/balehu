@@ -11,9 +11,9 @@ class HomePage extends React.Component {
 
     this.state = {
       data: [],
-      page: 0,
-      pages: null,                            // page number
-      pageSize: 20,                         // number of records in one page
+      page: 0,                                // current page number
+      pages: null,                            // total number of pages
+      pageSize: 20,                           // number of records in one page
       loading: true,                          // true if data is not loaded
       columns: [
         {
@@ -77,22 +77,6 @@ class HomePage extends React.Component {
 
     this.fetchData = this.fetchData.bind(this);
     this.requestData = this.requestData.bind(this);
-  }
-
-  componentWillMount() {
-    const self = this;
-    // let items = db.collection("cryptos")
-    // .get()
-    // .then(function(queryset) { 
-      
-    //   return queryset.docs.map((snapshot) => {
-    //     return snapshot.data()
-    //   })
-    // });
-
-    // items.then(res => {
-    //   console.log(res)
-    // })
   }
 
   /*
