@@ -3,26 +3,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route } from 'react-router-dom';
 import HomePage from './HomePage';
-
-import { db } from '../firebase.js';
+import DetailPage from './DetailPage';
 
 
 class App extends React.Component {
-  uploadJSON() {
-    $.getJSON( "media/data.json", function( data ) {
-      $.each( data, function( key, val ) {
-        db.collection('cryptos').add(val)
-      });
-    });
-  }
-
   render() {
-    const activeStyle = { color: 'blue' };
     return (
       <section>
-        <button onClick={this.uploadJSON.bind(this)}>Upload Json</button>
         <Switch>
           <Route exact path="/" component={HomePage} />
+          <Route path="/detail/:id" component={DetailPage} />
         </Switch>
       </section>
     );

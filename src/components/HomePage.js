@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import _ from "lodash";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { db } from '../firebase.js';
+import * as con from '../constant.js';
 
 class HomePage extends React.Component {
   constructor() {
@@ -17,66 +18,41 @@ class HomePage extends React.Component {
       loading: true,                          // true if data is not loaded
       columns: [
         {
-          Header: "CoinName",
-          accessor: "CoinName"
-        },
-        {
-          Header: "FullName",
-          accessor: "FullName"
-        },
-        {
-          Header: "FullyPremined",
-          accessor: "FullyPremined",
-        },
-        {
-          Header: "Id",
-          accessor: "Id"
-        },
-        {
-          Header: "ImageUrl",
-          accessor: "ImageUrl"
-        },
-        {
           Header: "Name",
           accessor: "Name"
-        },
-        {
-          Header: "PreMinedValue",
-          accessor: "PreMinedValue"
-        },
-        {
-          Header: "ProofType",
-          accessor: "ProofType"
-        },
-        {
-          Header: "SortOrder",
-          accessor: "SortOrder"
-        },
-        {
-          Header: "Sponsored",
-          accessor: "Sponsored"
         },
         {
           Header: "Symbol",
           accessor: "Symbol"
         }, 
         {
-          Header: "TotalCoinSupply",
-          accessor: "TotalCoinSupply"
+          Header: "ImageUrl",
+          accessor: "ImageUrl"
         },
         {
-          Header: "TotalCoinsFreeFloat",
-          accessor: "TotalCoinsFreeFloat"
+          Header: "ProofType",
+          accessor: "ProofType"
         },
         {
-          Header: "Url",
-          accessor: "Url"
+          Header: "Algorithm",
+          accessor: "Algorithm"
         }
       ]
     }
 
     this.fetchData = this.fetchData.bind(this);
     this.requestData = this.requestData.bind(this);
+    this.gotoDetail = this.gotoDetail.bind(this);
+  }
+  /*
+    ## Upload data from json file to firestore
+  */
+  uploadJSON() {
+    $.getJSON(con.JSON_DUMP_URL, function( data ) {
+      $.each( data, function( key, val ) {
+        db.collection('cryptos').add(val)
+      });
+    });
   }
 
   /*
@@ -90,10 +66,9 @@ class HomePage extends React.Component {
       - data:
       - page: page number
   */
-  fetchData(state, instance) {
+  fetchData(state) {
     this.setState({ loading: true });
-    console.log("*************************")
-    console.log(state)
+
     this.requestData(
       state.pageSize,
       state.page,
@@ -167,18 +142,28 @@ class HomePage extends React.Component {
           pages: Math.ceil(filteredData.length / pageSize),
           page: page
         };
-
-        // Here we'll simulate a server response with 500ms of delay.
-        setTimeout(() => resolve(res), 500);
+        resolve(res)
       });  
     });
   };
 
+  gotoDetail(data) {
+    this.props.history.push({
+      pathname: con.DETAIL_PAGE_URL + data.Id,
+      state: { data: data }
+    });
+  }
+
   render() {
+    const self = this;
     const { data, columns, loading, pages, pageSize } = this.state;
 
     return (
-      <div className="section">
+      <div className="container">
+        <div className="row center-item m-b-25">
+          <h2 className="m-r-25"> Coin Market </h2>
+          <button onClick={this.uploadJSON.bind(this)}>Upload Json</button>
+        </div>
         <ReactTable
           manual
           data={data}
@@ -194,10 +179,19 @@ class HomePage extends React.Component {
           ]}
           defaultPageSize={pageSize}
           className="-striped -highlight"
+          getTdProps={(state, rowInfo) => {
+            return {
+              onClick: (e) => {
+                self.gotoDetail(rowInfo.original);
+              }
+            }
+          }}
         />
       </div>
     );
   }
-};
+}
 
-export default HomePage;
+
+export default withRouter(HomePage);
+
