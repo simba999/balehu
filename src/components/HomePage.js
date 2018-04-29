@@ -104,7 +104,10 @@ class HomePage extends React.Component {
       .then(function(queryset) { 
         
         return queryset.docs.map((snapshot) => {
-          return snapshot.data()
+          var data = snapshot.data();
+          data['ImageUrl'] = 'http://Cryptocompare.com' + data['ImageUrl']
+          
+          return data;
         })
       });
 

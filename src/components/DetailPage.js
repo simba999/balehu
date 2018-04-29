@@ -13,6 +13,7 @@ class DetailPage extends React.Component {
   }
 
   componentWillMount() {
+    console.log(this.props.location.state.data)
     this.setState({
         id: this.props.match.params.id,
         data: this.props.location.state.data
