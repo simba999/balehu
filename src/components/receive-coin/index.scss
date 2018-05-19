@@ -1,0 +1,75 @@
+#receivecoin {
+	.modal-header {
+		height: 78px;
+    	padding: 32px 75px;
+    	//display: block;
+
+    	span { cursor: pointer; }
+
+    	span.close {
+    		position: absolute;
+    		right: 67px;
+    		top: 35px;
+    	}
+	}
+	.modal-body {
+		padding: 0px;
+		overflow-x: hidden;
+	}
+	.modal-title {
+		font-size: 18px;
+		font-weight: 600;
+		color: #bdbdbd;
+	}
+	.modal-title.active {
+		border-bottom: 3px solid red;
+    	padding-bottom: 18px;
+    	color: red;
+	}
+	.row-item {
+		padding: 16px 67px;
+		margin-bottom: 36px;
+    	margin-top: 16px;
+	}
+
+	.scan-btn { width: 120px; }
+
+	.form-control { height: 37px; }
+	.control-label { font-size: 14px; color: #000; }
+	.single-label { line-height: 2.15; text-align: center; }
+
+	.unit-price { 
+		float: right;
+	    margin-right: 84px;
+	    color: #424242;
+	    font-size: 12px;
+	    font-weight: 600;
+	}
+
+	.modal-footer {
+		border: none;
+		height: 40px;
+	}
+
+	.custom-btn {
+		margin: 5px auto;
+		height: 37px;
+		color: #009688;
+		border-color: #009688;
+		width: 240px;
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.email-btn { margin-top: 25px; }
+
+	#receiveCoin { margin-right: 25px; }
+	.request-amount {
+		color: #424242;
+		font-size: 14px;
+		position: absolute;
+		right: 25px;
+		top: 8px;
+	}
+}
+

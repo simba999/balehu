@@ -1,0 +1,48 @@
+#sendcoin {
+	.modal-header {
+		height: 78px;
+    	padding: 32px 75px;
+    	display: flex;
+    	align-items: center;
+
+    	span { margin-left: auto; }
+	}
+	.modal-body {
+		padding: 0px;
+		overflow-x: hidden;
+	}
+	.modal-title {
+		font-size: 18px;
+		font-weight: 600;
+		color: #424242;
+	}
+	.row-item {
+		padding: 16px 67px;
+		margin-bottom: 16px;
+    	margin-top: 16px;
+	}
+
+	.scan-btn { width: 120px; }
+
+	.modal-footer {
+		border: none;
+		padding: 30px 67px 48px 67px;
+
+		.btn {
+			width: 195px;
+			margin-right: 15px;
+		}
+	}
+
+	.form-control { height: 37px; }
+	.control-label { font-size: 14px; color: #000; }
+	.single-label { line-height: 2.15; text-align: center; }
+
+	.unit-price { 
+		float: right;
+	    margin-right: 84px;
+	    color: #424242;
+	    font-size: 12px;
+	    font-weight: 600;
+	}
+}
