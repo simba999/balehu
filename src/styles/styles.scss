@@ -325,7 +325,13 @@ body {
 		margin: 32px 297px 0 0;
 		text-align: right;
 
-		button { width: 190px; height: 37px; }
+		button { 
+			width: 190px; 
+			height: 37px; 
+			font-size: 16px;
+		    font-weight: 600;
+			height: 37px;
+		}
 	}
 }
 
@@ -388,9 +394,9 @@ body {
 	.control-label {
 		font-size: 14px;
 		font-weight: 600;
-		line-height: 2.15; text-align: center;
+		line-height: 2.15; text-align: left;
 	}
-	.single-label { line-height: 2.15; text-align: center; }
+	.single-label { line-height: 2.15; }
 	.mt-radio { color: #424242; font-size: 14px; font-weight: 600; }
 	.ft-bold { color: #424242; font-size: 14px; font-weight: 600; }
 }
@@ -405,6 +411,12 @@ body {
 .coin-input-panel {
 	margin-left: auto;
 }
+
+#startTime, #endTime {
+	height: 37px;
+}
+
+#coinAmount { text-indent: 5px; }
 
 /* Chart */
 #donut {
@@ -488,6 +500,9 @@ body {
 	.upper-panel {
 		display: block;
 	}
+	.end-time-group {
+		margin-top: 15px;
+	}
 }
 
 /* For All promotions panel */
@@ -522,4 +537,7 @@ body {
 	.coin-input-panel {
 		margin-top: 25px;
 	}
+	.day-btn-group { display: block; }
+	.input-medium { width: 100% !important; }
+	.coinAmount { width: 100%; }
 }

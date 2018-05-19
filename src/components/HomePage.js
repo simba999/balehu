@@ -1,9 +1,11 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import EditInformation from './edit-information';
 import SendCoin from './send-coin';
 import ReceiveCoin from './receive-coin';
 import Header from './header';
+import { changePromotionStatus } from '../actions/promotion';
 
 
 class HomePage extends React.Component {
@@ -12,6 +14,7 @@ class HomePage extends React.Component {
 
     this.state = {
       data: [],
+      currentTime: moment(),
       page: 0,                                // current page number
       pages: null,                            // total number of pages
       pageSize: 20,                           // number of records in one page
@@ -39,6 +42,8 @@ class HomePage extends React.Component {
         }
       ]
     }
+
+    this._changeStatus = this._changeStatus.bind(this);
   }
 
   componentDidMount() {
@@ -69,10 +74,73 @@ class HomePage extends React.Component {
           }
         });
       }
-    })
+    });
+  }
+
+  _changeStatus (data, flag) {
+    let tmp = Object.assign({}, data);
+    tmp['status'] = flag;
+    this.props.changePromotionStatus(tmp);
   }
 
   render() {
+    const businesses = this.props.businesses;
+    const allPromotions = Object.assign([], this.props.promotions);
+    let activePromotions = [];
+    let pausedPromotions = [];
+    let scheduledPromotions = [];
+
+    allPromotions.map((data) => {
+      if (data.status !== 'active') {
+        pausedPromotions.push(data);
+      } else {
+        const currentDate = moment().format('YYYY-MM-DD');
+        const currentDay = moment().format('ddd');
+        const selectDays = Object.assign({}, data.discoverableDays);
+
+        if (currentDay in selectDays) {
+          switch(data.discoverableHour) {
+            case 'allday':
+              activePromotions.push(data);
+              break;
+            case 'morning':
+              if ((this.state.currentTime < moment(currentDate + ' ' + '14:00:00')) &&
+                (this.state.currentTime > moment(currentDate + ' ' + '00:00:00')))  {
+                activePromotions.push(data);
+              }
+              break;
+            case 'afternoon':
+              if ((this.state.currentTime < moment(currentDate + ' ' + '12:00:00')) &&
+                (this.state.currentTime > moment(currentDate + ' ' + '20:30:00')))  {
+                activePromotions.push(data);
+              }
+              break;
+            case 'night':
+              if ((this.state.currentTime < moment(currentDate + ' ' + '23:59:59')) &&
+                (this.state.currentTime > moment(currentDate + ' ' + '07:00:00')))  {
+                activePromotions.push(data);
+              }
+              break;
+            case 'pickhour':
+              if ((this.state.currentTime < moment(currentDate + ' ' + data.discoverableEndTime)) &&
+                (this.state.currentTime > moment(currentDate + ' ' + data.discoverableStartTime)))  {
+                activePromotions.push(data);
+              }
+              break;
+            default:
+              pausedPromotions.push(data);
+          }
+        } else {
+          // not current day
+          pausedPromotions.push(data);
+        }
+      }
+
+      if (data.shareState == false) {
+        scheduledPromotions.push(data);
+      }
+    })
+
     return (
       <div className="page-container-bg-solid">
         {/* END HEADER */}
@@ -96,18 +164,18 @@ class HomePage extends React.Component {
                               <ul className="nav">
                                 <li className="flex-box active">
                                   <span className="icon-avatar"><i className="icon-map"></i></span>
-                                  <span className="description">123 6th St. <br />Melbourne, Florida 32904</span>
+                                  <span className="description">{businesses.bussinessAddress} <br />{businesses.city + ',' + businesses.state + ' ' + businesses.zipcode}</span>
                                 </li>
                                 <li>
                                   <span className="icon-avatar"><i className="fa fa-phone"></i></span>
-                                  <span className="description"> 123-45-67-89</span>
+                                  <span className="description">{businesses.phone}</span>
                                 </li>
                                 <li>
                                     <span className="icon-avatar"><i className="fa fa-user"></i></span>
-                                    <span className="description"> John Doe</span>
+                                    <span className="description">{businesses.contactName}</span>
                                 </li>
                                 <li className="flex-box">
-                                  <EditInformation />
+                                  <EditInformation data={businesses} />
                                 </li>
                               </ul>
                             </div>
@@ -233,80 +301,105 @@ class HomePage extends React.Component {
                               </div>
                               <ul className="nav nav-tabs pull-left">
                                 <li className="active">
-                                  <a href="#tab_1_1" data-toggle="tab"> Active </a>
+                                  <a href="#active_tab" data-toggle="tab"> Active </a>
                                 </li>
                                 <li>
-                                  <a href="#tab_1_2" data-toggle="tab"> Paused </a>
+                                  <a href="#paused_tab" data-toggle="tab"> Paused </a>
                                 </li>
                                 <li>
-                                  <a href="#tab_1_3" data-toggle="tab"> Scheduled </a>
+                                  <a href="#scheduled_tab" data-toggle="tab"> Scheduled </a>
                                 </li>
                               </ul>
                             </div>
                             {/* content body */}
                             <div className="portlet-body bg-white content-panel">
                               <div className="tab-content">
-                                <div className="tab-pane active" id="tab_1_1">
-                                  <div className="item no-top">
-                                    <div className="item-avatar">
-                                      <img src="styles/assets/pages/img/sample.png" className="" />
-                                    </div>
-                                    <div className="item-description">
-                                      <strong>Friday Salad Specials!</strong>
-                                      <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...</span>
-                                    </div>
-                                    <div className="item-btn">
-                                      <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
-                                    </div>
-                                    <div className="item-switch">
-                                      <strong>Active</strong>
-                                      <div className="custom-switch">
-                                        <div className="ring"></div>
+                                <div className="tab-pane active" id="active_tab">
+                                {
+                                  activePromotions.map((data) => {
+                                    return (
+                                      <div className="item">
+                                        <div className="item-avatar">
+                                          <img src="styles/assets/pages/img/sample.png" className="" />
+                                        </div>
+                                        <div className="item-description">
+                                          <strong>{data.title}</strong>
+                                          <span dangerouslySetInnerHTML={{__html: data.details }}></span>
+                                        </div>
+                                        <div className="item-btn">
+                                          <button 
+                                            type="button" 
+                                            className="btn btn-circle white btn-lg">
+                                            Analytics
+                                          </button>
+                                        </div>
+                                        <div className="item-switch">
+                                          <strong>Active</strong>
+                                          <div 
+                                            className="custom-switch"
+                                            onClick={() => this._changeStatus(data, false)}
+                                            >
+                                            <div className="ring"></div>
+                                          </div>
+                                        </div>
                                       </div>
-                                    </div>
-                                  </div>
-                                  <div className="item">
-                                    <div className="item-avatar">
-                                      <img src="styles/assets/pages/img/sample.png" className="" />
-                                    </div>
-                                    <div className="item-description">
-                                      <strong>Friday Salad Specials!</strong>
-                                      <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...</span>
-                                    </div>
-                                    <div className="item-btn">
-                                      <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
-                                    </div>
-                                    <div className="item-switch">
-                                      <strong>Active</strong>
-                                      <div className="custom-switch">
-                                        <div className="ring"></div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="item">
-                                    <div className="item-avatar">
-                                      <img src="styles/assets/pages/img/sample.png" className="" />
-                                    </div>
-                                    <div className="item-description">
-                                      <strong>Friday Salad Specials!</strong>
-                                      <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...</span>
-                                    </div>
-                                    <div className="item-btn">
-                                      <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
-                                    </div>
-                                    <div className="item-switch">
-                                      <strong>Active</strong>
-                                      <div className="custom-switch">
-                                        <div className="ring"></div>
-                                      </div>
-                                    </div>
-                                  </div>
+                                    )
+                                  })
+                                }
                                 </div>
-                                <div className="tab-pane" id="tab_1_2">
-                                  <h1>Paused TAB</h1>
+                                <div className="tab-pane" id="paused_tab">
+                                {
+                                  pausedPromotions.map((data) => {
+                                    return (
+                                      <div className="item">
+                                        <div className="item-avatar">
+                                          <img src="styles/assets/pages/img/sample.png" className="" />
+                                        </div>
+                                        <div className="item-description">
+                                          <strong>{data.title}</strong>
+                                          <span dangerouslySetInnerHTML={{__html: data.details }}></span>
+                                        </div>
+                                        <div className="item-btn">
+                                          <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
+                                        </div>
+                                        <div className="item-switch">
+                                          <strong>Active</strong>
+                                          <div 
+                                            onClick={() => this._changeStatus(data, true)}
+                                            className="custom-switch inactive">
+                                            <div className="ring"></div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )
+                                  })
+                                }
                                 </div>
-                                <div className="tab-pane" id="tab_1_3">
-                                  <h1>Scheduled TAB</h1>
+                                <div className="tab-pane" id="scheduled_tab">
+                                {
+                                  scheduledPromotions.map((data) => {
+                                    return (
+                                      <div className="item">
+                                        <div className="item-avatar">
+                                          <img src="styles/assets/pages/img/sample.png" className="" />
+                                        </div>
+                                        <div className="item-description">
+                                          <strong>{data.title}</strong>
+                                          <span dangerouslySetInnerHTML={{__html: data.details }}></span>
+                                        </div>
+                                        <div className="item-btn">
+                                          <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
+                                        </div>
+                                        <div className="item-switch">
+                                          <strong>Active</strong>
+                                          <div className="custom-switch">
+                                            <div className="ring"></div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )
+                                  })
+                                }
                                 </div>
                               </div>
                             </div>
@@ -326,6 +419,19 @@ class HomePage extends React.Component {
   }
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return ({
+    changePromotionStatus: (data) => { changePromotionStatus(data, dispatch); }
+  });
+}
 
-export default withRouter(HomePage);
+const mapStateToProps = (state) => {
+  return ({
+    promotions: state.promotions.promotions,
+    businesses: state.businesses.businesses,
+  });
+}
+
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage));
 

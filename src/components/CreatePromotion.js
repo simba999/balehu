@@ -17,26 +17,31 @@ class CreateComponent extends React.Component {
 
     this.state = {
       isLoading: false,
+      currentDate: moment().format('YYYY-MM-DD'),
       details: '',
       uploadImage: '',
       offer: '',
       shareState: true,
       socialAccount: {},
       isDiscoverableHourDiaglogOpen: false,
-      discoverableHour: moment().format(TIME_FORMAT),
-      discoverableEnd: moment().format(TIME_FORMAT),
+      discoverableHour: 'allday',
+      discoveralbeStartTime: '',
+      discoveralbeEndTime: '',
       discoverableDays: { 'Mon': true },
       position: {
         type: 'business',
         data: {}
       },
-      schedulePauseStatus: true
+      schedulePauseStatus: true,
+      balehuCoinAmount: '',
+      balehuValue: ''
     }
 
     this.onChangeThumbImage = this.onChangeThumbImage.bind(this);
     this._changeShareState = this._changeShareState.bind(this);
     this._onCreatePromotion = this._onCreatePromotion.bind(this);
     this._discoverableHourChange = this._discoverableHourChange.bind(this);
+    this._numberValidate = this._numberValidate.bind(this);
   }
 
   componentDidMount() {
@@ -60,13 +65,10 @@ class CreateComponent extends React.Component {
         $("#file-upload").trigger("click");
       })
 
-
+      $('.date-picker').datepicker('place');
       // change status of switch
       $(".custom-switch").click(function() {
-        // $(".custom-switch").addClass('inactive');
-
         if ($(this).hasClass('inactive')) {
-
           if ($(this).attr("val") === "coin") {
             $(this).removeClass('inactive');
             $("#promotionSwitch").addClass('inactive');
@@ -93,6 +95,11 @@ class CreateComponent extends React.Component {
             $("#coinAmount").show();
           }
         }
+
+        self.setState({
+          balehuCoinAmount: 0,
+          balehuValue: ''      
+        })
       })
 
       // buttons from Mon to Sun
@@ -121,7 +128,6 @@ class CreateComponent extends React.Component {
           if ( $(this).attr('val') === 'currentLoc' ) {
             if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition((res) => {
-                console.log('##: ', res);
                 const position = Object.assign({}, self.state.position);
                 position['type'] = 'current';
                 position['data'] = res;
@@ -161,6 +167,16 @@ class CreateComponent extends React.Component {
     this.setState({ shareState: flag });
   }
 
+  _numberValidate(val) {
+    if (val == '') {
+      this.setState({ balehuCoinAmount: '' });
+    } else {
+      if (parseInt(val)) {
+        this.setState({ balehuCoinAmount: parseInt(val) });
+      }
+    }
+  }
+
   _onCreatePromotion() {
     let promotion = {};
 
@@ -168,37 +184,56 @@ class CreateComponent extends React.Component {
     promotion['details'] = CKEDITOR.instances.editor.getData();
     promotion['shareState'] = this.state.shareState;
     promotion['category'] = $("#promotionCategory").val();
-
-    if ($(".custom-switch").hasClass('inactive')) {
-      // get coin amount
-      if ($(this).attr("val") !== "coin") {
-        promotion['balehuCoinAmount'] = $("#coinAmount").val();
-        promotion['balehuValue'] = '';
-      } else {
-        // get balehu value
-        promotion['balehuCoinAmount'] = '';
-        promotion['balehuValue'] = $("#balehuValue").val();
-      }
-    }
-
+    promotion['balehuCoinAmount'] = this.state.balehuCoinAmount;
+    promotion['balehuValue'] = this.state.balehuValue;
     promotion['schedulePauseStatus'] = this.state.schedulePauseStatus;
+    promotion['status'] = 'active';
+    promotion['discoverableDays'] = this.state.discoverableDays;
 
     if (this.state.schedulePauseStatus) {
       promotion['schedulePauseDate'] = $("#schedulePauseDate").val();
+    } {
+      promotion['status'] = 'active';
     }
 
+    if (this.state.isDiscoverableHourDiaglogOpen) {
+      promotion['discoverableHour'] = 'pickhour';
+      promotion['discoveralbeStartTime'] = $("#startTime").val();
+      promotion['discoveralbeEndTime'] = $("#endTime").val();
+      
+      if (moment(this.state.currentDate + ' ' + promotion['discoveralbeStartTime']) >= 
+        moment(this.state.currentDate + ' ' + promotion['discoveralbeEndTime'])
+      ) {
+        alert('Time Error')
+        return;
+      }
+
+    } else {
+      promotion['discoverableHour'] = this.state.discoverableHour;
+    }
+
+    if (promotion['discoverableHour'] == 'allday') {
+      promotion['status'] = 'active';
+    }
     let tmp = {};
     tmp['facebook'] = $("#facebookCheck").prop("checked");
     tmp['twitter'] = $("#twitterCheck").prop("checked");
 
     promotion['socialAccount'] = tmp;
 
-    this.props.createNewPromotion(promotion);
-    this.props.history.push('/');
+    if ( promotion['title'] === '' ||
+         promotion['details'] === '' ||
+         promotion['discoverableHour'] === '' ||
+        ( promotion['balehuValue'] === '' && promotion['balehuCoinAmount'] === '')
+    ) {
+      alert("can't create a new promotion!");
+    } else {
+      this.props.createNewPromotion(promotion);
+      this.props.history.push('/');
+    }   
   }
 
   _discoverableHourChange(val) {
-    console.log('vale')
     if (val === 'pickhour') {
       this.setState({ isDiscoverableHourDiaglogOpen: true });
       setTimeout(()=> {
@@ -240,7 +275,6 @@ class CreateComponent extends React.Component {
   }
 
   render() {
-    console.log(this.state)
     return(
       <div className="page-container-bg-solid">
         <div className="page-wrapper">
@@ -294,7 +328,17 @@ class CreateComponent extends React.Component {
                                   <div className="ring-label">Balehu Coin</div>
                                 </div>
                                 <div className="coin-input-panel">
-                                  <input type="text" id="coinAmount" className="" placeholder="Coin Amount" />
+                                  <input 
+                                    name="number"
+                                    aria-required="true" 
+                                    aria-invalid="true" 
+                                    aria-describedby="number-error"
+                                    type="text" 
+                                    id="coinAmount" 
+                                    className=""
+                                    value={this.state.balehuCoinAmount}
+                                    onChange={(e) => this._numberValidate(e.target.value)}
+                                    placeholder="Coin Amount" />
                                 </div>
                               </div>
                             </div>
@@ -314,11 +358,19 @@ class CreateComponent extends React.Component {
                             <div className="form-group">
                               <label className="col-md-3 control-label single-label">Balehu value</label>
                               <div className="col-md-9">
-                                <input type="text" id="balehuValue" className="form-control" placeholder="Enter value" disabled />
+                                <input 
+                                  type="text" 
+                                  id="balehuValue" 
+                                  className="form-control"
+                                  value={this.state.balehuValue}
+                                  onChange={(e) => this.setState({ balehuValue: e.target.value })}
+                                  placeholder="Enter value" 
+                                  disabled />
                               </div>
                             </div>
                           </div>
                         </section>
+                        <hr className="line-break" />
                         <section className="promotion-balehu-market">
                           <div className="row row-item">
                             <div className="row-item__title">Balehu Marketplace</div>
@@ -361,15 +413,17 @@ class CreateComponent extends React.Component {
                               <div className="col-md-9">
                                 <select 
                                   className="form-control m-t-15" 
-                                  placeholder="All Day" 
+                                  placeholder="All Day"
+                                  id="discoverableHourSelect"
                                   onChange={(e) => this._discoverableHourChange(e.target.value)}>
-                                  <option value="all">All Day</option>
-                                  <option value="mornings">Mornings(unitl 2pm)</option>
-                                  <option value="afternoon">Afternoon / evening(12:00pm - 8:30pm), After hours (after 7pm)</option>
+                                  <option value="allday">All Day</option>
+                                  <option value="morning">Mornings(unitl 2pm)</option>
+                                  <option value="afternoon">Afternoon / evening(12:00pm - 8:30pm)</option>
+                                  <option value="night">After hours (after 7pm)</option>
                                   <option value="pickhour">Pick Hours</option>
                                 </select>
                                 <div className="row m-t-15">
-                                  <div className="col-md-6 no=padding">
+                                  <div className="col-md-6">
                                     {
                                       this.state.isDiscoverableHourDiaglogOpen 
                                         ? <div className="input-group">
@@ -389,10 +443,10 @@ class CreateComponent extends React.Component {
                                   <div className="col-md-6">
                                     {
                                       this.state.isDiscoverableHourDiaglogOpen 
-                                        ? <div className="input-group">
+                                        ? <div className="input-group end-time-group">
                                             <input 
                                               type="text" 
-                                              id="startTime"
+                                              id="endTime"
                                               className="form-control timepicker timepicker-end-24" />
                                             <span className="input-group-btn">
                                                 <button className="btn default" type="button">
@@ -450,6 +504,7 @@ class CreateComponent extends React.Component {
                             </div>
                           </div>
                         </section>
+                        <hr className="line-break" />
                         <section className="social-share">
                           <div className="row row-item">
                             <div className="form-group">
@@ -506,7 +561,7 @@ class CreateComponent extends React.Component {
                             type="button" 
                             onClick={this._onCreatePromotion}
                             className="btn btn-circle white btn-sm bg-darkgreen">
-                            save promotion
+                            Save Promotion
                           </button>
                         </div>
                       </div>
@@ -530,7 +585,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   return ({
-    promotions: state.promotions
+    promotions: state.promotions.promotions
   });
 }
 

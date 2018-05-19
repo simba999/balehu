@@ -1,13 +1,12 @@
-*** React Crypto currency project  ***
+*** React Balehu  ***
 This project uses firestore and react table.
 
 !---------------- How to run ----------------------!
-1. download project from https://github.com/simba999/react-datatale.git
+1. download project from https://github.com/
 2. npm install
 3. ### run the app ###
       if you watch files, npm run start
-      if not, npm run open:src
-4: if you want to build app, npm run build
+      if not, npm run server
 
 
 
