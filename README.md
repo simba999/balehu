@@ -1,5 +1,4 @@
 *** React Balehu  ***
-This project uses firestore and react table.
 
 !---------------- How to run ----------------------!
 1. download project from https://github.com/
