@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import {connect} from 'react-redux';
 import DateTimePicker from 'react-datetime-picker';
@@ -11,30 +12,38 @@ import moment from 'moment';
 const TIME_FORMAT = "YYYY-MM-DD hh:mm:ss";
 
 
-class CreateComponent extends React.Component {
-  constructor() {
-    super();
+class CreatePromotion extends React.Component {
+  constructor(props) {
+    super(props);
 
     this.state = {
       isLoading: false,
       currentDate: moment().format('YYYY-MM-DD'),
-      details: '',
       uploadImage: '',
       offer: '',
-      shareState: true,
-      socialAccount: {},
       isDiscoverableHourDiaglogOpen: false,
       discoverableHour: 'allday',
       discoveralbeStartTime: '',
       discoveralbeEndTime: '',
-      discoverableDays: { 'Mon': true },
       position: {
         type: 'business',
         data: {}
       },
-      schedulePauseStatus: true,
+      shareState: true,
+      details: '',
+      title: '',
+      category: 'food',
       balehuCoinAmount: '',
-      balehuValue: ''
+      balehuValue: '',
+      schedulePauseStatus: true,
+      schedulePauseDate: '',
+      discoverableDays: { 'Mon': true },
+      shareSocaialHour: moment().format(TIME_FORMAT),
+      socialAccount: { 
+        facebook: false,
+        twitter: false
+      },
+      id: null,
     }
 
     this.onChangeThumbImage = this.onChangeThumbImage.bind(this);
@@ -72,26 +81,24 @@ class CreateComponent extends React.Component {
           if ($(this).attr("val") === "coin") {
             $(this).removeClass('inactive');
             $("#promotionSwitch").addClass('inactive');
-            $("#balehuValue").prop("disabled", true);
+            $(".balehuValue").hide();
             $("#coinAmount").show();
           } else {
             $(this).removeClass('inactive');
             $("#coinSwitch").addClass('inactive');
-            $("#balehuValue").prop("disabled", false);
+            $(".balehuValue").show();
             $("#coinAmount").hide();
           }
         } else {
           if ($(this).attr("val") === "coin") {
             $(this).addClass('inactive');
             $("#promotionSwitch").removeClass('inactive');
-
-            $("#balehuValue").prop("disabled", false);
+            $(".balehuValue").show();
             $("#coinAmount").hide();
           } else {
             $(this).addClass('inactive');
             $("#coinSwitch").removeClass('inactive');
-
-            $("#balehuValue").prop("disabled", true);
+            $(".balehuValue").hide();
             $("#coinAmount").show();
           }
         }
@@ -126,16 +133,18 @@ class CreateComponent extends React.Component {
           $(this).addClass('active');
 
           if ( $(this).attr('val') === 'currentLoc' ) {
-            if (navigator.geolocation) {
+            if (Object.keys(navigator.geolocation).length > 0) {
               navigator.geolocation.getCurrentPosition((res) => {
                 const position = Object.assign({}, self.state.position);
                 position['type'] = 'current';
                 position['data'] = res;
 
-                self.setState({ position: position })
+                self.setState({ position: position });
               });
             } else {
               alert("can't get your current location!");
+              $(this).removeClass('active');
+              $(this).siblings().addClass('active');
             }
           } else {
             const position = Object.assign({}, self.state.position);
@@ -189,11 +198,12 @@ class CreateComponent extends React.Component {
     promotion['schedulePauseStatus'] = this.state.schedulePauseStatus;
     promotion['status'] = 'active';
     promotion['discoverableDays'] = this.state.discoverableDays;
-
-    if (this.state.schedulePauseStatus) {
-      promotion['schedulePauseDate'] = $("#schedulePauseDate").val();
+    promotion['schedulePauseDate'] = $("#schedulePauseDate").val();
+    if (!this.state.schedulePauseStatus) {
+      
+      promotion['status'] = false;
     } {
-      promotion['status'] = 'active';
+      promotion['status'] = true;
     }
 
     if (this.state.isDiscoverableHourDiaglogOpen) {
@@ -212,14 +222,12 @@ class CreateComponent extends React.Component {
       promotion['discoverableHour'] = this.state.discoverableHour;
     }
 
-    if (promotion['discoverableHour'] == 'allday') {
-      promotion['status'] = 'active';
-    }
     let tmp = {};
     tmp['facebook'] = $("#facebookCheck").prop("checked");
     tmp['twitter'] = $("#twitterCheck").prop("checked");
 
     promotion['socialAccount'] = tmp;
+    promotion['shareSocaialHour'] = this.state.shareSocaialHour;
 
     if ( promotion['title'] === '' ||
          promotion['details'] === '' ||
@@ -274,6 +282,14 @@ class CreateComponent extends React.Component {
     }
   }
 
+  _upload() {
+    $("#file-upload").trigger('click');
+  }
+
+  _fileInputChange(e) {
+    console.log(e)
+  }
+
   render() {
     return(
       <div className="page-container-bg-solid">
@@ -293,19 +309,21 @@ class CreateComponent extends React.Component {
                             <div className="row-item__title">Promotion Detail</div>
                           </div>
                           <div className="row row-item">
-                            <div className="form-group">
-                              <label className="col-md-3 control-label single-label">Picture</label>
-                              <div className="col-md-9">
-                                <input id="file-upload" style={{ display: 'none' }}  accept="image/*" type="file" onChange={(e) => this.onChangeThumbImage(e) } />
-                                <button type="button" className="btn btn-circle white btn-sm bg-lightblue" id="upload-btn">upload file</button>
-                              </div>
+                            <div className="business-image  ">
+                              <div type="button" className="btn btn-circle white btn-sm" id="upload-btn">Change picture</div>
                             </div>
                           </div>
                           <div className="row row-item">
                             <div className="form-group">
                               <label className="col-md-3 control-label single-label">Headline</label>
                               <div className="col-md-9">
-                                <input type="text" id="promotionTitle" className="form-control" placeholder="Enter Promotion’s Title" />
+                                <input 
+                                  type="text" 
+                                  id="promotionTitle" 
+                                  value={this.state.title}
+                                  onChange={(e) => this.setState({ title: e.target.value }) }
+                                  className="form-control"
+                                  placeholder="Enter Promotion’s Title" />
                               </div>
                             </div>
                           </div>
@@ -322,7 +340,9 @@ class CreateComponent extends React.Component {
                               <label className="col-md-3 control-label single-label">offer</label>
                               <div className="col-md-9 coin-wrapper">
                                 <div className="coin-switch-panel">
-                                  <div className="custom-switch" val="coin" id="coinSwitch">
+                                  <div 
+                                    className="custom-switch" 
+                                    val="coin" id="coinSwitch">
                                     <div className="ring"></div>
                                   </div>
                                   <div className="ring-label">Balehu Coin</div>
@@ -347,7 +367,9 @@ class CreateComponent extends React.Component {
                             <div className="form-group">
                               <label className="col-md-3 control-label single-label"></label>
                               <div className="col-md-9 flex-box m-t-15">
-                                <div className="custom-switch inactive" val="promotion" id="promotionSwitch">
+                                <div 
+                                  className="custom-switch inactive"  
+                                  val="promotion" id="promotionSwitch">
                                   <div className="ring"></div>
                                 </div>
                                 <div className="ring-label">Balehu promotion</div>
@@ -355,8 +377,8 @@ class CreateComponent extends React.Component {
                             </div>
                           </div>
                           <div className="row row-item">
-                            <div className="form-group">
-                              <label className="col-md-3 control-label single-label">Balehu value</label>
+                            <div className="form-group balehuValue">
+                              <label className="col-md-3 control-label">Balehu promotion value</label>
                               <div className="col-md-9">
                                 <input 
                                   type="text" 
@@ -364,8 +386,7 @@ class CreateComponent extends React.Component {
                                   className="form-control"
                                   value={this.state.balehuValue}
                                   onChange={(e) => this.setState({ balehuValue: e.target.value })}
-                                  placeholder="Enter value" 
-                                  disabled />
+                                  placeholder="Enter value" />
                               </div>
                             </div>
                           </div>
@@ -379,7 +400,12 @@ class CreateComponent extends React.Component {
                             <div className="form-group">
                               <label className="col-md-3 control-label single-label">Category</label>
                               <div className="col-md-9">
-                                <select className="form-control" placeholder="Select Category" id="promotionCategory">
+                                <select 
+                                  className="form-control" 
+                                  placeholder="Select Category" 
+                                  value={this.state.category}
+                                  onChange={(e) => this.setState({ category: e.target.value }) }
+                                  id="promotionCategory">
                                   <option value="food">Food</option>
                                   <option value="drinks">Drinks</option>
                                   <option value="shopping">Shopping</option>
@@ -488,8 +514,7 @@ class CreateComponent extends React.Component {
                                   id="schedulePauseDate"
                                   data-date-format="dd-mm-yyyy" 
                                   data-date-start-date="+0d"
-                                  type="text" 
-                                  value="" />
+                                  type="text" />
                                 <span className="help-block"> Select date </span>
                               </div>
                             </div>
@@ -511,18 +536,18 @@ class CreateComponent extends React.Component {
                               <label className="col-md-3 control-label single-label">Share on</label>
                               <div className="col-md-9">
                                 <div className="mt-checkbox-list">
-                                    <label className="mt-checkbox">
-                                      <input type="checkbox" id="facebookCheck" value="option1" />
-                                      <i className="fa fa-lg fa-facebook-official"></i>
-                                      <label className="check-right-label">SocialAccunt</label>
-                                      <span></span>
-                                    </label>
-                                    <label className="mt-checkbox">
-                                      <input type="checkbox" id="twitterCheck" value="option1" />
-                                      <i className="fa fa-lg fa-twitter"></i>
-                                      <label className="check-right-label">SocialAccunt</label>
-                                      <span></span>
-                                    </label>
+                                  <label className="mt-checkbox">
+                                    <input type="checkbox" id="facebookCheck" value="option1" />
+                                    <i className="fa fa-lg fa-facebook-official"></i>
+                                    <label className="check-right-label">SocialAccunt</label>
+                                    <span></span>
+                                  </label>
+                                  <label className="mt-checkbox">
+                                    <input type="checkbox" id="twitterCheck" value="option1" />
+                                    <i className="fa fa-lg fa-twitter"></i>
+                                    <label className="check-right-label">SocialAccunt</label>
+                                    <span></span>
+                                  </label>
                                 </div>
                               </div>
                             </div>
@@ -532,24 +557,35 @@ class CreateComponent extends React.Component {
                               <label className="col-md-3 control-label single-label">Share off</label>
                               <div className="col-md-9">
                                 <div className="mt-radio-list">
-                                    <label className="mt-radio"> Share now
-                                      <input 
-                                        type="radio" 
-                                        value="1" 
-                                        name="socialShareState"  
-                                        onClick={() => this._changeShareState(true)}
-                                        defaultChecked />
-                                      <span></span>
-                                    </label>
-                                    <label className="mt-radio"> Schedule for later
-                                      <input 
-                                        type="radio" 
-                                        value="1" 
-                                        onClick={() => this._changeShareState(false)}
-                                        name="socialShareState" />
-                                      <span></span>
-                                    </label>
+                                  <label className="mt-radio"> Share now
+                                    <input 
+                                      type="radio" 
+                                      value="1" 
+                                      name="socialShareState"  
+                                      onClick={() => this._changeShareState(true)}
+                                      defaultChecked />
+                                    <span></span>
+                                  </label>
+                                  <label className="mt-radio"> Schedule for later
+                                    <input 
+                                      type="radio" 
+                                      value="1" 
+                                      onClick={() => this._changeShareState(false)}
+                                      name="socialShareState" />
+                                    <span></span>
+                                  </label>
                                 </div>
+                                {
+                                  !this.state.shareState
+                                    ? <DateTime
+                                        value={this.state.shareSocaialHour}
+                                        timeFormat={TIME_FORMAT}
+                                        input={true}
+                                        className="schedulePauseInput"
+                                        onChange={(e)=> this.setState({shareSocaialHour: e.format(TIME_FORMAT)})}
+                                        disableOnClickOutside={false} />
+                                    : null
+                                }                                
                               </div>
                             </div>
                           </div>
@@ -577,6 +613,10 @@ class CreateComponent extends React.Component {
   }
 }
 
+CreatePromotion.propTypes = {
+  data: PropTypes.object
+}
+
 const mapDispatchToProps = (dispatch) => {
   return ({
     createNewPromotion: (data) => { createNewPromotion(data, dispatch); }
@@ -589,4 +629,4 @@ const mapStateToProps = (state) => {
   });
 }
 
-export default  withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateComponent));
+export default  withRouter(connect(mapStateToProps, mapDispatchToProps)(CreatePromotion));

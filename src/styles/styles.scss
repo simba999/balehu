@@ -4,7 +4,11 @@
 }
 
 body {
-	//font-family: Roboto;
+	background-color: #e9e9e9
+}
+
+.page-content {
+	background-color: #e9e9e9;
 }
 
 /* Constant */
@@ -24,7 +28,17 @@ body {
 }
 
 .btn.white:not(.btn-outline).color-lightgrey, .color-lightgrey { color: #9e9e9e; }
+.btn.white:not(.btn-outline).color-lightgrey, .color-lightblue { color: #5c9eff; }
 .btn.white:not(.btn-outline).color-lightgreen, .color-lightgreen { color: #009688; }
+.color-label {
+	color: #424242;
+}
+
+.right-align {
+	margin-left: auto;
+	float: right;
+	clear: right;
+}
 
 .color-strong { color: #424242; }
 
@@ -73,7 +87,30 @@ body {
 
 .fa-facebook-official { color: #3b5998; }
 .fa-twitter { color: #5c9eff; }
+.locationPin {
+	width: 18px;
+	height: auto;
+	margin-top: 4px;
+}
 
+.control-label {
+	font-size: 14px;
+	font-weight: 600;
+}
+.single-label {
+	line-height: 30px;
+}
+
+.sub-header {
+	color: #424242;
+	font-weight: 600;
+	font-size: 18px;
+	padding: 16px 0;
+}
+
+.form-control {
+	height: 37px;
+}
 
 /* Header */
 .logo { height: 100%; }
@@ -247,8 +284,8 @@ body {
 
 .item-switch {
 	width: 20%;
-	display: flex;
-	align-items: center;
+	text-align: right;
+	justify-content: center;
 
 	strong {
 		margin-left: auto;
@@ -342,7 +379,7 @@ body {
 .row-item__title {
 	font-size: 18px;
     font-weight: 600;
-    padding-left: 15px;
+    /*padding-left: 15px;*/
     color: #424242;
 }
 
@@ -394,7 +431,7 @@ body {
 	.control-label {
 		font-size: 14px;
 		font-weight: 600;
-		line-height: 2.15; text-align: left;
+		/*line-height: 2.15; text-align: left;*/
 	}
 	.single-label { line-height: 2.15; }
 	.mt-radio { color: #424242; font-size: 14px; font-weight: 600; }
@@ -417,6 +454,36 @@ body {
 }
 
 #coinAmount { text-indent: 5px; }
+.profile-userpic {
+	background: url('../styles/assets/pages/img/food-image2.png') no-repeat;
+	background-size: cover;
+	height: 256px;
+	position: relative;
+	display: block;
+
+	.business-name {
+		color: #fff;
+	    font-size: 28px;
+	    text-align: center;
+	    justify-content: center;
+	    align-items: center;
+	    vertical-align: middle;
+	    margin-left: 34px;
+	    line-height: 450px;
+	}
+}
+
+.business-image {
+	height: 96px;
+	background: url('../styles/assets/pages/img/food-image2.png') no-repeat;
+
+	#upload-btn {
+		margin-top: 50px;
+		margin-left: 34px;
+	}
+}
+
+.balehuValue { display: none; }
 
 /* Chart */
 #donut {
@@ -470,18 +537,41 @@ body {
     border-color: #5c9eff;
 }
 
-/*.mt-radio>span:after {
-    left: 5px;
-    top: 5px;
-    height: 6px;
-    width: 6px;
-    border-radius: 100%!important;
-    background: #5c9eff;
-}*/
 .dateTimePicker1 { z-index: 10000; }
-/*.clock1 { display: none; }
-.react-datetime-picker__button__input { display: none; }
-.react-datetime-picker__clear-button { display: none; }*/
+
+/* login page */
+.login-page {
+	width: 664px;
+}
+.login-body {
+	padding: 35px 63px;
+	background-color: #fff;
+
+	.form-group span {
+		color: #424242;
+	}
+
+	.signup-btn { width: 192px; }
+}
+a.color-lightblue {
+	text-decoration: none;
+}
+a.color-lightblue:hover { text-decoration: none; }
+.appstore-icons { width: 150px; }
+.download-app-page .row-item {
+	padding: 16px 15px;
+}
+
+.transfer-coin {
+	float: right;
+	clear: right;
+}
+
+.resend-panel {
+	display: flex;
+	text-align: center;
+	justify-content: center;
+}
 
 @media (max-width: 1199px) {
 	.send-coin { margin-right: 0;  margin-bottom: 15px; }
@@ -509,19 +599,22 @@ body {
 @media (max-width: 660px) {
 	.item { display: block; }
 	.item-avatar { width: auto; margin-bottom: 24px; }
-	.item-description { width: 100%; margin-bottom: 24px; padding: 0; }
+	.item-description { 
+		width: 100%; 
+		margin-bottom: 24px; 
+		padding: 0; 
+		text-align: center; 
+		justify-content: center;
+	}
 	.item-btn {
 	    width: auto;
 	    text-align: center;
 	    margin-bottom: 24px;
 	}
 	.item-switch {
-		width: auto;
+		margin: 0 auto;
+		text-align: center;
 		justify-content: center;
-
-		strong {
-			margin: 0 10px 0 0;
-		}
 	}
 
 	.promotion-footer .footer-btn-wrapper button { width: auto; }

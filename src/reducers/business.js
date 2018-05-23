@@ -9,6 +9,9 @@ const initialState = {
   	email: 'agent@mail.com',
   	phone: '123-45-67-89'
   },
+  signupInfo: {
+
+  }
 };
 
 const reducer = (state = initialState, action) => {
@@ -36,6 +39,10 @@ const reducer = (state = initialState, action) => {
 			// }
 			businesses = action.payload.data;
 			return { ...state, businesses: businesses };
+
+		case 'CHANGE_SIGNUP_STATUS':
+			let signupInfo = Object.assign({}, state.signupInfo, action.payload.data);
+			return { ...state, signupInfo: signupInfo };
 
 		default:
 			return state;

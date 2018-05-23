@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
 import { changeBusinessStatus } from '../../actions/business';
 import './index.scss';
 
@@ -22,6 +22,7 @@ class EditInformation extends React.Component {
     }
 
     this.editBusiness = this.editBusiness.bind(this);
+    this._fileInputChange = this._fileInputChange.bind(this);
   }
 
   editBusiness() {
@@ -37,8 +38,15 @@ class EditInformation extends React.Component {
     } else {
       this.props.changeBusinessStatus(this.state);
       $("#responsive").modal('hide');  
-    }
-    
+    } 
+  }
+
+  _upload() {
+    $("#file-upload").trigger('click');
+  }
+
+  _fileInputChange(e) {
+    console.log(e)
   }
 
   render() {
@@ -52,7 +60,16 @@ class EditInformation extends React.Component {
           </div>
           <div className="modal-body">
             <div className="content-logo">
-              <a className="btn btn-circle white btn-sm" href="#">Change Picture</a>
+              <input 
+                type="file" 
+                style={{ display: 'none' }} 
+                onChange={(e) => { console.log('AAA', e.target.value); this._fileInputChange(e.target.value) }}
+                id="file-upload" />
+              <NavLink 
+                className="btn btn-circle white btn-sm" 
+                onClick={this._upload.bind(this)}
+                to=""
+                >Change Picture</NavLink>
             </div>
             <div className="row-item">
               <div className="form-group">

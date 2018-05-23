@@ -2,8 +2,11 @@ import React from 'react';
 import {connect} from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import EditInformation from './edit-information';
+import CreatePromotion from './CreatePromotion';
+import EditPromotion from './EditPromotion';
 import SendCoin from './send-coin';
 import ReceiveCoin from './receive-coin';
+import TransferGift from './transfer-gift';
 import Header from './header';
 import { changePromotionStatus } from '../actions/promotion';
 
@@ -91,8 +94,8 @@ class HomePage extends React.Component {
     let scheduledPromotions = [];
 
     allPromotions.map((data) => {
-      if (data.status !== 'active') {
-        pausedPromotions.push(data);
+      if (data.status === true) {
+        activePromotions.push(data);
       } else {
         const currentDate = moment().format('YYYY-MM-DD');
         const currentDay = moment().format('ddd');
@@ -158,12 +161,14 @@ class HomePage extends React.Component {
                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                           <div className="portlet light profile-sidebar-portlet no-padding auto-full">
                             <div className="profile-userpic">
-                              <img src="styles/assets/pages/img/food-image2.png" className="img-responsive my-image" alt="food-image" />
+                              <span className="business-name">{businesses.businessName}</span>
                             </div>
                             <div className="profile-usermenu custom-profile-menu">
                               <ul className="nav">
                                 <li className="flex-box active">
-                                  <span className="icon-avatar"><i className="icon-map"></i></span>
+                                  <span className="icon-avatar">
+                                    <img src="styles/assets/pages/img/location-pin.svg" className="locationPin" alt="location-pin" />
+                                    </span>
                                   <span className="description">{businesses.bussinessAddress} <br />{businesses.city + ',' + businesses.state + ' ' + businesses.zipcode}</span>
                                 </li>
                                 <li>
@@ -201,7 +206,7 @@ class HomePage extends React.Component {
                               <hr className="break-line" />
                               <div className="">
                                 <div className="item-header">
-                                  <span className="item-label">Gift Card Balance</span>
+                                  <span className="item-label">Business card cash</span>
                                   <span className="item-price">240.00</span>
                                 </div>
                                 <div className="form-group form-md-line-input item-bottom-height">
@@ -209,7 +214,7 @@ class HomePage extends React.Component {
                                 </div>
                               </div>
                               <div className="row item-bottom-height">
-                                <button type="button" className="btn btn-circle white btn-sm pull-right">Transfer gift</button>
+                                <TransferGift />
                               </div>
                             </div>
                           </div>
@@ -266,7 +271,7 @@ class HomePage extends React.Component {
                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                           <div className="portlet light profile-sidebar-portlet no-padding">
                             <div className="promotion-panel">
-                              <div className="title">All Promotions</div>
+                              <div className="title">Promotions</div>
                               <div className="text-center">
                                 <NavLink 
                                   to="/promotion"
@@ -334,12 +339,17 @@ class HomePage extends React.Component {
                                           </button>
                                         </div>
                                         <div className="item-switch">
-                                          <strong>Active</strong>
-                                          <div 
-                                            className="custom-switch"
-                                            onClick={() => this._changeStatus(data, false)}
-                                            >
-                                            <div className="ring"></div>
+                                          <div className="flex-box">
+                                            <strong>Active</strong>
+                                            <div 
+                                              className="custom-switch"
+                                              onClick={() => this._changeStatus(data, false)}
+                                              >
+                                              <div className="ring"></div>
+                                            </div>
+                                          </div>
+                                          <div className="row m-t-15">
+                                            <EditPromotion data={data} />                                              
                                           </div>
                                         </div>
                                       </div>
@@ -363,11 +373,19 @@ class HomePage extends React.Component {
                                           <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
                                         </div>
                                         <div className="item-switch">
-                                          <strong>Active</strong>
-                                          <div 
-                                            onClick={() => this._changeStatus(data, true)}
-                                            className="custom-switch inactive">
-                                            <div className="ring"></div>
+                                          <div className="flex-box">
+                                            <strong>Active</strong>
+                                            <div 
+                                              className={ data.status ? "custom-switch" : "custom-switch inactive" }
+                                              onClick={() => this._changeStatus(data, true)}
+                                              >
+                                              <div className="ring"></div>
+                                            </div>
+                                          </div>
+                                          <div className="row m-t-15">
+                                            <NavLink 
+                                              className="btn btn-circle white btn-sm"
+                                              to={"/promotion/" + data.id } >Edit Information</NavLink>
                                           </div>
                                         </div>
                                       </div>
@@ -391,9 +409,19 @@ class HomePage extends React.Component {
                                           <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
                                         </div>
                                         <div className="item-switch">
-                                          <strong>Active</strong>
-                                          <div className="custom-switch">
-                                            <div className="ring"></div>
+                                          <div className="flex-box">
+                                            <strong>Active</strong>
+                                            <div 
+                                              className="custom-switch"
+                                              onClick={() => this._changeStatus(data, true)}
+                                              >
+                                              <div className="ring"></div>
+                                            </div>
+                                          </div>
+                                          <div className="row m-t-15">
+                                            <NavLink 
+                                              className="btn btn-circle white btn-sm"
+                                              to={"/promotion/" + data.id } />
                                           </div>
                                         </div>
                                       </div>

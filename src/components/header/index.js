@@ -1,9 +1,15 @@
 import React from 'react';
-
+import {connect} from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 class Header extends React.Component {
   constructor(props) {
     super(props)
+  }
+
+  _logout() {
+    window.localStorage.clear();
+    this.props.history.push('/login');
   }
 
   render() {
@@ -25,7 +31,7 @@ class Header extends React.Component {
                     <ul className="nav navbar-nav pull-right">
                       <li className="dropdown dropdown-extended quick-sidebar-toggler">
                           <span className="sr-only">Toggle Quick Sidebar</span>
-                          <i className="icon-logout"></i>
+                          <i className="icon-logout" onClick={this._logout.bind(this)}></i>
                       </li>
                     </ul>
                   </div>
@@ -38,4 +44,15 @@ class Header extends React.Component {
   }
 }
 
-export default Header;
+const mapDispatchToProps = (dispatch) => {
+  return ({
+  });
+}
+
+const mapStateToProps = (state) => {
+  return ({
+    businesses: state.businesses.businesses
+  });
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

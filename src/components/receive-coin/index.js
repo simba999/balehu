@@ -1,6 +1,9 @@
 import React from 'react';
 import QRCode from 'qrcode.react';
 
+import {connect} from 'react-redux';
+import { withRouter, NavLink } from 'react-router-dom';
+
 import './index.scss';
 
 
@@ -98,7 +101,9 @@ class ReceiveCoin extends React.Component {
                 <div className="form-group">
                   <label className="col-md-2 control-label single-label"></label>
                   <div className="col-md-10">
-                    <button type="button" className="btn btn-circle white btn-sm custom-btn">Request via sms</button>
+                    <button 
+                      type="button" 
+                      className="btn btn-circle white btn-sm custom-btn">Request via sms</button>
                   </div>
                 </div>
               </div>
@@ -112,4 +117,16 @@ class ReceiveCoin extends React.Component {
   }
 }
 
-export default ReceiveCoin;
+const mapDispatchToProps = (dispatch) => {
+  return ({
+    // changeBusinessStatus: (data) => { changeBusinessStatus(data, dispatch); }
+  });
+}
+
+const mapStateToProps = (state) => {
+  return ({
+    businesses: state.businesses.businesses
+  });
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReceiveCoin));
