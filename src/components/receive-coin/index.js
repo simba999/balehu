@@ -107,7 +107,7 @@ class ReceiveCoin extends React.Component {
                   </div>
                 </div>
               </div>
-            </div>
+              </div>
           </div>
           <div className="modal-footer">
           </div>

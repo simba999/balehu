@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import {connect} from 'react-redux';
 import DateTimePicker from 'react-datetime-picker';
 import DateTime from 'react-datetime';
-import { createNewPromotion } from '../actions/promotion';
+import { changePromotionStatus } from '../actions/promotion';
 import Header from './header';
 import 'react-datetime/css/react-datetime.css';
 import moment from 'moment';
@@ -21,6 +21,7 @@ class EditPromotion extends React.Component {
       currentDate: moment().format('YYYY-MM-DD'),
       uploadImage: '',
       offer: '',
+      isCoinSwitch: true,
       isDiscoverableHourDiaglogOpen: false,
       discoverableHour: this.props.data.discoverableHour || 'allday',
       discoveralbeStartTime: this.props.data.discoveralbeStartTime || '',
@@ -41,80 +42,92 @@ class EditPromotion extends React.Component {
       shareSocaialHour: this.props.data.shareSocaialHour || moment().format(TIME_FORMAT),
       socialAccount: this.props.data.socialAccount || {},
       id: this.props.data.id || null,
+      modalId: "edit-promotion" + "-" + Math.random().toString(36).slice(8),
+      editorId: "ckeditor" + this.props.data.id
     }
 
-    this.onChangeThumbImage = this.onChangeThumbImage.bind(this);
-    this._changeShareState = this._changeShareState.bind(this);
-    this._onCreatePromotion = this._onCreatePromotion.bind(this);
-    this._discoverableHourChange = this._discoverableHourChange.bind(this);
-    this._numberValidate = this._numberValidate.bind(this);
+    this.onChangeThumbImage       = this.onChangeThumbImage.bind(this);
+    this._changeShareState        = this._changeShareState.bind(this);
+    this._onCreatePromotion       = this._onCreatePromotion.bind(this);
+    this._discoverableHourChange  = this._discoverableHourChange.bind(this);
+    this._numberValidate          = this._numberValidate.bind(this);
   }
 
   componentDidMount() {
-    const self = this;
+    const self                    = this;
+    let _pre                      = "#" + self.state.modalId;
+    let _sel                      = '';
 
     $(document).ready(function() {
-      let editorId = "editor";
-
-      if (self.state.id) {
-        editorId += self.state.id; 
-      }
-
-      CKEDITOR.replace(editorId, {
-        removePlugins: 'about',
-        allowedContent: true
-      });
-
-      CKEDITOR.instances.editor.on('change', function () {
-        let data = CKEDITOR.instances.editor.getData();
-        self.setState({ details: data });
-      }.bind(this));
-      
-
       // image upload
       $("#upload-btn").click(function() {
         $("#file-upload").trigger("click");
       })
 
       $('.date-picker').datepicker('place');
+      
       // change status of switch
-      $(".custom-switch").click(function() {
+      var switch_case = _pre + " .custom-switch";
+      $(switch_case).click(function() {
         if ($(this).hasClass('inactive')) {
           if ($(this).attr("val") === "coin") {
             $(this).removeClass('inactive');
-            $("#promotionSwitch").addClass('inactive');
-            // $("#balehuValue").prop("disabled", true);
-            $(".balehuValue").hide();
-            $("#coinAmount").show();
+
+            _sel  = _pre + " .promotionSwitch";
+            
+            $(_sel).addClass('inactive');
+            
+            _sel      = _pre + " .balehuValueRow";
+            $(_sel).hide();
+           
+            _sel      = _pre + " .coinAmount";
+            $(_sel).show();
+
           } else {
+            
             $(this).removeClass('inactive');
-            $("#coinSwitch").addClass('inactive');
-            // $("#balehuValue").prop("disabled", false);
-            $(".balehuValue").show();
-            $("#coinAmount").hide();
-          }
-        } else {
-          if ($(this).attr("val") === "coin") {
-            $(this).addClass('inactive');
-            $("#promotionSwitch").removeClass('inactive');
+            
+            _sel      = _pre + " .coinSwitch";
+            $(_sel).addClass('inactive');
 
-            // $("#balehuValue").prop("disabled", false);
-            $(".balehuValue").show();
-            $("#coinAmount").hide();
+            _sel      = _pre + " .balehuValueRow";
+            $(_sel).show();
+
+            _sel      = _pre + " .coinAmount";
+            $(_sel).hide();
+
+          }
+
+        } else {
+
+          if ($(this).attr("val") === "coin") {
+
+            $(this).addClass('inactive');
+            
+            _sel = _pre + " .promotionSwitch";
+
+            $(_sel).removeClass('inactive');
+            
+            _sel = _pre + " .balehuValueRow";
+            $(_sel).show();
+            
+            _sel = _pre + " .coinAmount";
+            $(_sel).hide();
+
           } else {
             $(this).addClass('inactive');
-            $("#coinSwitch").removeClass('inactive');
 
-            // $("#balehuValue").prop("disabled", true);
-            $(".balehuValue").hide();
-            $("#coinAmount").show();
+            _sel = _pre + " .coinSwitch";
+
+            $(_sel).removeClass('inactive');
+            
+            _sel = _pre + " .balehuValueRow";
+            $(_sel).hide();
+            
+            _sel = _pre + " .coinAmount";
+            $(_sel).show();
           }
         }
-
-        self.setState({
-          balehuCoinAmount: 0,
-          balehuValue: ''      
-        })
       })
 
       // buttons from Mon to Sun
@@ -161,6 +174,14 @@ class EditPromotion extends React.Component {
           }
       });
 
+      const _selector                       = "#" + self.state.modalId;
+      $(_selector).on('hidden.bs.modal', function() {
+        if (Object.keys(CKEDITOR.instances).length > 0) {
+          CKEDITOR.instances[self.state.editorId].destroy();  
+        }
+        
+      });
+
       // check pause status
       $("input[name='ScheduleStatus']").click(function() {
         if ($(this).attr("value") == 0) {
@@ -172,33 +193,6 @@ class EditPromotion extends React.Component {
         }
       });
     });
-
-    // input existing values into dom
-    if (this.state.balehuValue === "") {
-      $(".balehuValue").hide();
-      $("#coinAmount").show();
-    } else {
-      $(".balehuValue").show();
-      $("#coinAmount").hide();
-    }
-
-    // from mon to sun
-    const tmp = this.state.discoverableDays;
-    for (let day in tmp) {
-      const _selector = "#" + day;
-      $(_selector).addClass('active');
-    }
-
-    // location setting
-    if (!this.props.data.position) {
-      $("#busniessLoc").addClass('active');
-    } else {
-      if (this.props.data.position.type != "business") {
-        $("#currentLoc").addClass('active');
-      } else {
-        $("#busniessLoc").addClass('active')
-      }
-    }
   }
 
   onChangeThumbImage(e) {
@@ -223,20 +217,30 @@ class EditPromotion extends React.Component {
   // action trigger when clicking save promotion button                 
   _onCreatePromotion() {
     let promotion                           = {};
+    let editorId                            = "editor";
+    
+    if (this.props.data.id >= 0) {
+      editorId += this.props.data.id; 
+    }
 
     promotion['title']                      = $("#promotionTitle").val();
-    promotion['details']                    = CKEDITOR.instances.editor.getData();
+    promotion['details']                    = CKEDITOR.instances[this.state.editorId].getData();
     promotion['shareState']                 = this.state.shareState;
     promotion['category']                   = $("#promotionCategory").val();
-    promotion['balehuCoinAmount']           = this.state.balehuCoinAmount;
-    promotion['balehuValue']                = this.state.balehuValue;
+    if (this.state.isCoinSwitch) {
+      promotion['balehuCoinAmount']           = this.state.balehuCoinAmount;
+      promotion['balehuValue']                = 0;
+    } else {
+      promotion['balehuCoinAmount']           = 0;
+      promotion['balehuValue']                = this.state.balehuValue;
+    }
     promotion['schedulePauseStatus']        = this.state.schedulePauseStatus;
     promotion['status']                     = 'active';
     promotion['discoverableDays']           = this.state.discoverableDays;
 
     if (this.state.schedulePauseStatus) {
 
-      promotion['schedulePauseDate']        = $("#schedulePauseDate").val();
+      promotion['schedulePauseDate']        = this.state.schedulePauseDate;
       promotion['status']                   = false;
 
     } else {
@@ -267,6 +271,7 @@ class EditPromotion extends React.Component {
 
     promotion['socialAccount']              = tmp;
     promotion['shareSocaialHour']           = this.state.shareSocaialHour;
+    promotion['id']                         = this.props.data.id;
 
     if ( promotion['title'] === '' ||
          promotion['details'] === '' ||
@@ -278,8 +283,13 @@ class EditPromotion extends React.Component {
 
     } else {
 
-      this.props.createNewPromotion(promotion);
-      this.props.history.push('/');
+      CKEDITOR.instances[this.state.editorId].destroy();
+
+      const _selector                       = "#" + this.state.modalId;
+      $(_selector).modal('hide');
+
+      this.props.changePromotionStatus(promotion);
+
 
     }   
   }
@@ -349,9 +359,38 @@ class EditPromotion extends React.Component {
   _showDialog() {
 
     const self                            = this;
-    const _selector                       = "#edit-promotion" + this.props.data.id;
+    const _selector                       = "#" + this.state.modalId;
     
     $(_selector).modal('show');
+    $('.date-picker').datepicker('place');
+
+    let _pre                              = "#" + self.state.modalId;
+    let _sel                              = '';
+
+     // input existing values into dom
+    if (this.state.balehuValue === "") {
+
+      _sel                                = _pre + " .balehuValueRow";
+      $(_sel).hide();
+
+      _sel                                = _pre + " .coinAmount";
+      $(_sel).show();
+
+      _sel                                = _pre + " .promotionSwitch";
+      $(_sel).addClass('inactive');      
+
+    } else {
+
+      _sel                                = _pre + " .balehuValueRow";
+      $(_sel).show();
+
+      _sel                                = _pre + " .coinAmount";
+      $(_sel).hide();
+
+      _sel                                = _pre + " .coinSwitch";
+      $(_sel).addClass('inactive');
+
+    }
 
     if (this.props.data.socialAccount['facebook']) {
       $("#facebookCheck").prop("checked", true);
@@ -362,7 +401,7 @@ class EditPromotion extends React.Component {
     }
 
     // pause manually or automatically
-    if (this.props.data.schedulePauseStatus) {
+    if (!this.props.data.schedulePauseStatus) {
       $("#scheduleNowPause").prop("checked", true);
     } else {
       $("#scheduleLaterPause").prop("checked", true);
@@ -375,15 +414,64 @@ class EditPromotion extends React.Component {
       $("#socialShareLater").prop("checked", true);
     }
 
-    const state = Object.assign({}, this.state, this.props.data);
+    const tmp                         = this.props.data.discoverableDays;
+    _sel                              = _pre + " .day-btn";
+    
+    $(_sel).removeClass('active');
+    
+    for (let day in tmp) {
+      const _tmpSelector              = _pre + " #" + day;
+      $(_tmpSelector).addClass('active');
+    }
+
+    // location pre setting
+    _sel                                    = _pre + " .btn-loc";
+    $(_sel).removeClass("active");
+
+    if (!this.props.data.position) {
+      _sel                                  = _pre + " .busniessLoc";
+      $(_sel).addClass('active');
+    } else {
+      if (this.props.data.position.type != "business") {
+
+        _sel                                = _pre + " .currentLoc";
+        $(_sel).addClass('active');
+
+      } else {
+
+        _sel                                = _pre + " .busniessLoc";
+        $(_sel).addClass('active');
+
+      }
+    }
+
+    const isCoinSwitch = { isCoinSwitch: true };
+    
+    if (this.props.data.balehuValue !== '') {
+      isCoinSwitch.isCoinSwitch = false;
+    }
+
+    const state = Object.assign({}, this.state, this.props.data, isCoinSwitch);
+
     this.setState(state);
 
     setTimeout(() => {
 
-      $("#schedulePauseDate").val(self.state.schedulePauseDate);
       self._discoverableHourChange(self.state.discoverableHour, self.state.startTime, self.state.endTime, true);
 
-    }, 1500);
+      CKEDITOR.replace(self.state.editorId, {
+        removePlugins: 'about',
+        allowedContent: true
+      });
+
+      CKEDITOR.instances[self.state.editorId].on('change', function () {
+        let data = CKEDITOR.instances[self.state.editorId].getData();
+        self.setState({ details: data });
+      }.bind(this));
+
+      CKEDITOR.instances[self.state.editorId].setData(self.props.data.details);
+
+    }, 500);
 
   }
 
@@ -395,7 +483,7 @@ class EditPromotion extends React.Component {
           className="btn btn-circle white btn-sm transfer-coin" 
           onClick={this._showDialog.bind(this)}> 
           Edit Promotion </a>
-        <div id={"edit-promotion"+this.props.data.id} className="modal container fade" tabIndex="-1">
+        <div id={this.state.modalId} className="modal container fade" tabIndex="-1">
           <div className="modal-body">
             <div className="promotion-header">Edit Promotion</div>
             <div className="promotion-body">
@@ -427,8 +515,7 @@ class EditPromotion extends React.Component {
                     <label className="col-md-3 control-label single-label">Details</label>
                     <div className="col-md-9">
                       <textarea 
-                        name={ !this.state.id ? "editor" : "editor" + this.state.id }
-                        ref="contentVal" />
+                        name={ this.state.editorId } />
                     </div>
                   </div>
                 </div>
@@ -438,25 +525,33 @@ class EditPromotion extends React.Component {
                     <div className="col-md-9 coin-wrapper">
                       <div className="coin-switch-panel">
                         <div 
-                          className="custom-switch"
-                          val="coin" id="coinSwitch">
+                          className={
+                            this.state.isCoinSwitch 
+                              ? "custom-switch cointSwitch"
+                              : "custom-switch coinSwitch inactive"
+                          }
+                          onClick={() => this.setState({isCoinSwitch: !this.state.isCoinSwitch}) }
+                          val="coin">
                           <div className="ring"></div>
                         </div>
                         <div className="ring-label">Balehu Coin</div>
                       </div>
-                      <div className="coin-input-panel">
-                        <input 
-                          name="number"
-                          aria-required="true" 
-                          aria-invalid="true" 
-                          aria-describedby="number-error"
-                          type="text" 
-                          id="coinAmount" 
-                          className=""
-                          value={this.state.balehuCoinAmount}
-                          onChange={(e) => this._numberValidate(e.target.value)}
-                          placeholder="Coin Amount" />
-                      </div>
+                      {
+                        this.state.isCoinSwitch
+                          ? <div className="coin-input-panel">
+                              <input 
+                                name="number"
+                                aria-required="true" 
+                                aria-invalid="true" 
+                                aria-describedby="number-error"
+                                type="text" 
+                                className="coinAmount"
+                                value={this.state.balehuCoinAmount}
+                                onChange={(e) => this._numberValidate(e.target.value)}
+                                placeholder="Coin Amount" />
+                            </div>
+                          : null
+                      }
                     </div>
                   </div>
                 </div>
@@ -465,28 +560,37 @@ class EditPromotion extends React.Component {
                     <label className="col-md-3 control-label single-label"></label>
                     <div className="col-md-9 flex-box m-t-15">
                       <div 
-                        className="custom-switch inactive"
-                        val="promotion" id="promotionSwitch">
+                        className={ 
+                          this.state.isCoinSwitch 
+                            ? "custom-switch promotionSwitch inactive"
+                            : "custom-switch promotionSwitch"
+                        }
+                        onClick={() => this.setState({isCoinSwitch: !this.state.isCoinSwitch}) }
+                        val="promotion">
                         <div className="ring"></div>
                       </div>
                       <div className="ring-label">Balehu promotion</div>
                     </div>
                   </div>
                 </div>
-                <div className="row row-item">
-                  <div className="form-group balehuValue">
-                    <label className="col-md-3 control-label">Balehu promotion value</label>
-                    <div className="col-md-9">
-                      <input 
-                        type="text" 
-                        id="balehuValue" 
-                        className="form-control"
-                        value={this.state.balehuValue}
-                        onChange={(e) => this.setState({ balehuValue: e.target.value })}
-                        placeholder="Enter value" />
-                    </div>
-                  </div>
-                </div>
+                {
+                  !this.state.isCoinSwitch
+                    ? <div className="row row-item">
+                        <div className="form-group balehuValueRow">
+                          <label className="col-md-3 control-label">Balehu promotion value</label>
+                          <div className="col-md-9">
+                            <input 
+                              type="text" 
+                              id="balehuValue" 
+                              className="form-control"
+                              value={this.state.balehuValue}
+                              onChange={(e) => this.setState({ balehuValue: e.target.value })}
+                              placeholder="Enter value" />
+                          </div>
+                        </div>
+                      </div>
+                    : null
+                }
               </section>
               <hr className="line-break" />
               <section className="promotion-balehu-market">
@@ -556,6 +660,8 @@ class EditPromotion extends React.Component {
                                   <input 
                                     type="text" 
                                     id="startTime"
+                                    value={this.state.discoveralbeStartTime}
+                                    onChange={(e) => this.setState({discoveralbeStartTime: e.target.value}) } 
                                     className="form-control timepicker timepicker-24" />
                                   <span className="input-group-btn">
                                       <button className="btn default" type="button">
@@ -573,6 +679,8 @@ class EditPromotion extends React.Component {
                                   <input 
                                     type="text" 
                                     id="endTime"
+                                    value={this.state.discoveralbeEndTime}
+                                    onChange={(e) => this.setState({discoveralbeEndTime: e.target.value}) }
                                     className="form-control timepicker timepicker-end-24" />
                                   <span className="input-group-btn">
                                       <button className="btn default" type="button">
@@ -621,11 +729,10 @@ class EditPromotion extends React.Component {
                         size="16"
                         id="schedulePauseDate"
                         value={this.state.schedulePauseDate}
-                        onChange={(e) => this.state.schedulePauseDate}
+                        onChange={(e) => this.setState({schedulePauseDate: e.target.value}) }
                         data-date-format="dd-mm-yyyy" 
                         data-date-start-date="+0d"
-                        type="text" 
-                        value="" />
+                        type="text" />
                       <span className="help-block"> Select date </span>
                     </div>
                   </div>
@@ -634,8 +741,8 @@ class EditPromotion extends React.Component {
                   <div className="form-group">
                     <label className="col-md-3 control-label single-label">Location</label>
                     <div className="col-md-9">
-                      <button className="btn btn-loc active col-md-6" val="busniessLoc" id="busniessLoc">Business Location</button>
-                      <button className="btn btn-loc col-md-6" val="currentLoc" id="currentLoc">My Current Location</button>
+                      <button className="btn btn-loc active col-md-6 busniessLoc" val="busniessLoc">Business Location</button>
+                      <button className="btn btn-loc col-md-6 busniessLoc" val="currentLoc">My Current Location</button>
                     </div>
                   </div>
                 </div>
@@ -733,7 +840,7 @@ EditPromotion.propTypes = {
 
 const mapDispatchToProps = (dispatch) => {
   return ({
-    createNewPromotion: (data) => { createNewPromotion(data, dispatch); }
+    changePromotionStatus: (data) => { changePromotionStatus(data, dispatch); }
   });
 }
 

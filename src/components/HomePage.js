@@ -348,7 +348,7 @@ class HomePage extends React.Component {
                                               <div className="ring"></div>
                                             </div>
                                           </div>
-                                          <div className="row m-t-15">
+                                          <div className="m-t-15">
                                             <EditPromotion data={data} />                                              
                                           </div>
                                         </div>
@@ -382,10 +382,8 @@ class HomePage extends React.Component {
                                               <div className="ring"></div>
                                             </div>
                                           </div>
-                                          <div className="row m-t-15">
-                                            <NavLink 
-                                              className="btn btn-circle white btn-sm"
-                                              to={"/promotion/" + data.id } >Edit Information</NavLink>
+                                          <div className="m-t-15">
+                                            <EditPromotion data={data} />
                                           </div>
                                         </div>
                                       </div>
@@ -418,10 +416,8 @@ class HomePage extends React.Component {
                                               <div className="ring"></div>
                                             </div>
                                           </div>
-                                          <div className="row m-t-15">
-                                            <NavLink 
-                                              className="btn btn-circle white btn-sm"
-                                              to={"/promotion/" + data.id } />
+                                          <div className="m-t-15">
+                                            <EditPromotion data={data} />
                                           </div>
                                         </div>
                                       </div>

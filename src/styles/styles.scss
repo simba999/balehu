@@ -345,12 +345,16 @@ body {
 }
 
 .promotion-body{
-	padding: 47px 294px;
+	padding: 17px 294px;
 	background-color: #fff;
 
 	section { margin-bottom: 25px; }
 
 	button { height: 37px; }
+
+	.e {
+		margin: auto 15px;
+	}
 }
 
 .promotion-footer {
@@ -379,7 +383,7 @@ body {
 .row-item__title {
 	font-size: 18px;
     font-weight: 600;
-    /*padding-left: 15px;*/
+    padding-left: 15px;
     color: #424242;
 }
 
@@ -476,6 +480,8 @@ body {
 .business-image {
 	height: 96px;
 	background: url('../styles/assets/pages/img/food-image2.png') no-repeat;
+	background-size: cover;
+	margin: auto 15px;
 
 	#upload-btn {
 		margin-top: 50px;
@@ -576,6 +582,7 @@ a.color-lightblue:hover { text-decoration: none; }
 @media (max-width: 1199px) {
 	.send-coin { margin-right: 0;  margin-bottom: 15px; }
 	.button-grps { display: block !important; }
+	.promotion-header { padding-left: 50px; }
 	.promotion-body { padding: 47px 67px; }
 	.promotion-footer {
 		.footer-btn-wrapper {

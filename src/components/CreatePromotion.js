@@ -237,6 +237,7 @@ class CreatePromotion extends React.Component {
       alert("can't create a new promotion!");
     } else {
       this.props.createNewPromotion(promotion);
+      CKEDITOR.instances.editor.destroy();
       this.props.history.push('/');
     }   
   }
