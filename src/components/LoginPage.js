@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import Header from './header';
 import ResendEmail from './resend-email';
 import ForgotPassword from './forgot-password';
+import { login } from '../actions/auth';
 import $ from '../styles/assets/global/plugins/jquery.min.js';
 
 
@@ -22,18 +23,24 @@ class LoginComponent extends React.Component {
   		   data['password'] === '') {
   		alert("Username or password is not empty");
   	} else {
-  		if (Object.keys(this.props.signupInfo).length !== 0) {
-  			if ((data['email'] === this.props.signupInfo['email']) &&
-  				(data['password'] === this.props.signupInfo['password'])) {
-  				window.localStorage.setItem('email', data['email']);
-  				window.localStorage.setItem('password', data['password']);
-  				this.props.history.push('/');
+
+  			if ((data['username'] !== '') &&
+  				(data['password'] !== '')) {
+    				
+            login({username: data['username'], password: data['password']}).then((res) => {
+              if (res.code == 200) {
+                window.localStorage.setItem('username', data['username']);
+                window.localStorage.setItem('token', res.token)
+                this.props.history.push('/');
+              } else {
+                alert(err.message);
+              }
+            });
+
   			} else {
   				alert('Password or email is not correct');
   			}
-  		} else {
-				alert('Authentication Error');
-  		}
+
   	}
   }
 

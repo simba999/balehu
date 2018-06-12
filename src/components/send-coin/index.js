@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import QrReader from 'react-qr-reader'
 import { withRouter, NavLink } from 'react-router-dom';
 import './index.scss';
 
@@ -7,10 +8,34 @@ import './index.scss';
 class SendCoin extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      isScan: false,
+      delay: 300,
+      result: 'No result',
+    }
+
+    this.handleScan         = this.handleScan.bind(this);
+    this.openImageDialog    = this.openImageDialog.bind(this);
   }
 
   _onSubmit() {
     $("#sendcoin").modal('hide');
+  }
+
+  openImageDialog() {
+    this.refs.qrReader1.openImageDialog()
+  }
+
+  handleScan(data){
+    if(data){
+      this.setState({
+        result: data,
+      })
+    }
+  }
+  handleError(err){
+    console.error(err)
   }
 
   render() {
@@ -23,24 +48,51 @@ class SendCoin extends React.Component {
             <span className="close" data-dismiss="modal" aria-hidden="true"><i className="fa fa-close"></i></span>
           </div>
           <div className="modal-body">
-            <div className="row-item">
+            <div className="row row-item">
               <div className="form-group">
                 <label className="col-md-2 control-label single-label">To</label>
                 <div className="col-md-10">
-                  <button type="button" className="btn btn-circle white btn-lg bg-darkgreen scan-btn">Scan Code</button>
+                  <button 
+                    type="button"
+                    onClick={() => this.setState({isScan: true}) } 
+                    className="btn btn-circle white btn-lg bg-darkgreen scan-btn">Scan Code</button>
                 </div>
               </div>
             </div>
-            <div className="unit-price">$2.65 usd per coin </div>
-            <div className="row-item">
+            {
+              this.state.isScan
+                ? <div className="row row-item">
+                    <div className="col-md-9">
+                      <QrReader
+                        ref="qrReader1"
+                        delay={this.state.delay}
+                        onError={this.handleError}
+                        onScan={this.handleScan}
+                        style={{ width: '100%' }}
+                        legacyMode />
+                      <p>{this.state.result}</p>
+                    </div>
+                    <div className="col-md-3">
+                      <input
+                        type="button"
+                        onClick={() => this.openImageDialog()}
+                        value="Open Image"
+                        className="btn btn-circle white btn-lg" />
+                    </div>
+                  </div>
+                : null
+            }
+            
+            <div className="row row-item">
+              <div className="unit-price">$2.65 usd per coin </div>
               <div className="form-group">
-                <label className="col-md-2 control-label single-label">Amount</label>
+                <label className="col-md-2 control-label single-label amount-label">Amount</label>
                 <div className="col-md-10">
                   <input type="text" className="form-control" placeholder="123 6th St. 32904" />
                 </div>
               </div>
             </div>
-            <div className="row-item">
+            <div className="row row-item">
               <div className="form-group">
                 <label className="col-md-2 control-label single-label">Memo</label>
                 <div className="col-md-10">

@@ -1,0 +1,11 @@
+balehu-web
+
+W6MinFcWLalbzgXNKVAlIaiIpexwZAgExzPAAZAghVTi94JkvHn5CHRN0oey1gfZ
+
+
+===========================================================================
+
+https://www.google.com/search?q=json+web+token+in+reactjs&oq=json+web+tokens+in+react&aqs=chrome.1.69i59j0l3.8941j0j7&sourceid=chrome&ie=UTF-8
+the tokens are good for 1 hour and can be refreshed for up to 48 hours in 1 hour increments
+
+user passwords must be 8 or more characters long and contain 1 upper case 1 lower case and 1 number

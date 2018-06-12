@@ -778,7 +778,7 @@ class EditPromotion extends React.Component {
                 </div>
                 <div className="row row-item">
                   <div className="form-group">
-                    <label className="col-md-3 control-label single-label">Share off</label>
+                    <label className="col-md-3 control-label single-label">Share time</label>
                     <div className="col-md-9">
                       <div className="mt-radio-list">
                         <label className="mt-radio"> Share now

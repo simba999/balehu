@@ -21,7 +21,7 @@ class Header extends React.Component {
               <div className="page-header-top">
                 <div className="container">
                   <div className="page-logo">
-                    <a href="#"><img src="styles/assets/pages/img/balehu-logo.png" className="logo" alt="logo" /></a>
+                    <a href="#"><img src="/styles/assets/pages/img/balehu-logo.png" className="logo" alt="logo" /></a>
                   </div>
                   {/* RESPONSIVE MENU TOOGLE */}
                   <a href="javascript:;" className="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">

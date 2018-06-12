@@ -5,6 +5,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import HomePage from './HomePage';
 import DetailPage from './DetailPage';
 import CreatePromotion from './CreatePromotion';
+import Analytics from './Analytics';
 import EditPromotion from './EditPromotion';
 import LoginComponent from './LoginPage';
 import SignupComponent from './SignupPage';
@@ -54,6 +55,22 @@ class App extends React.Component {
             render={() => (
               validator() 
                 ? (<EditPromotion />)
+                : (<Redirect to="/login" />)
+            )} />
+            <Route 
+            exact 
+            path="/analytics/:id" 
+            render={() => (
+              validator() 
+                ? (<Analytics />)
+                : (<Redirect to="/login" />)
+            )} />
+            <Route 
+            exact 
+            path="/testanalytics" 
+            render={() => (
+              validator() 
+                ? (<Analytics />)
                 : (<Redirect to="/login" />)
             )} />
           <Route exact path="/login" component={LoginComponent} />

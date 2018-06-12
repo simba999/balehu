@@ -47,6 +47,7 @@ class HomePage extends React.Component {
     }
 
     this._changeStatus = this._changeStatus.bind(this);
+    this._doAnalytics = this._doAnalytics.bind(this);
   }
 
   componentDidMount() {
@@ -84,6 +85,10 @@ class HomePage extends React.Component {
     let tmp = Object.assign({}, data);
     tmp['status'] = flag;
     this.props.changePromotionStatus(tmp);
+  }
+
+  _doAnalytics(id) {
+    this.props.history.push('/analytics/'+id);
   }
 
   render() {
@@ -161,7 +166,7 @@ class HomePage extends React.Component {
                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                           <div className="portlet light profile-sidebar-portlet no-padding auto-full">
                             <div className="profile-userpic">
-                              <span className="business-name">{businesses.businessName}</span>
+                              <div className="business-name">{businesses.businessName}</div>
                             </div>
                             <div className="profile-usermenu custom-profile-menu">
                               <ul className="nav">
@@ -206,15 +211,12 @@ class HomePage extends React.Component {
                               <hr className="break-line" />
                               <div className="">
                                 <div className="item-header">
-                                  <span className="item-label">Business card cash</span>
+                                  <span className="item-label">{businesses.businessName} cash</span>
                                   <span className="item-price">240.00</span>
                                 </div>
                                 <div className="form-group form-md-line-input item-bottom-height">
                                   <label htmlFor="form_control_1" className="color-lightgrey">Short description of Gift Balance</label>
                                 </div>
-                              </div>
-                              <div className="row item-bottom-height">
-                                <TransferGift />
                               </div>
                             </div>
                           </div>
@@ -333,7 +335,8 @@ class HomePage extends React.Component {
                                         </div>
                                         <div className="item-btn">
                                           <button 
-                                            type="button" 
+                                            type="button"
+                                            onClick={() => this._doAnalytics(data.id)}
                                             className="btn btn-circle white btn-lg">
                                             Analytics
                                           </button>
@@ -370,7 +373,10 @@ class HomePage extends React.Component {
                                           <span dangerouslySetInnerHTML={{__html: data.details }}></span>
                                         </div>
                                         <div className="item-btn">
-                                          <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
+                                          <button 
+                                            type="button" 
+                                            onClick={() => this._doAnalytics(data.id)}
+                                            className="btn btn-circle white btn-lg">Analytics</button>
                                         </div>
                                         <div className="item-switch">
                                           <div className="flex-box">
@@ -404,7 +410,10 @@ class HomePage extends React.Component {
                                           <span dangerouslySetInnerHTML={{__html: data.details }}></span>
                                         </div>
                                         <div className="item-btn">
-                                          <button type="button" className="btn btn-circle white btn-lg">Analytics</button>
+                                          <button 
+                                            type="button" 
+                                            onClick={() => this._doAnalytics(data.id)}
+                                            className="btn btn-circle white btn-lg">Analytics</button>
                                         </div>
                                         <div className="item-switch">
                                           <div className="flex-box">

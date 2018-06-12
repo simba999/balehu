@@ -18,7 +18,9 @@ class SignupDownloadApp extends React.Component {
 
 	_onSubmit() {
 		this.props.changeSignupStatus();
-		this.props.history.push('/login');
+    window.localStorage.setItem('email', this.props.signupInfo['email']);
+    window.localStorage.setItem('password', this.props.signupInfo['password']);
+		this.props.history.push('/');
 	}
 
 	render() {
@@ -41,9 +43,6 @@ class SignupDownloadApp extends React.Component {
       		</div>
       		<div className="sub-header">
       			<span>Download Marketplace App:</span>
-      		</div>
-      		<div className="row-itemw row-item">
-      			Download the Marketplace app to your phone. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
       		</div>
       		<div className="row row-item">
       			<img 

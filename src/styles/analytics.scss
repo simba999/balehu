@@ -1,0 +1,51 @@
+.portlet>.portlet-title>.nav-tabs {
+	margin-right: 65px;
+}
+
+.analytics-subject {
+    margin-left: 50px;
+    font-size: 18px;
+    color: #424242;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.analytics-sub-heading {
+	font-size: 14px;
+	color: #424242;
+	font-weight: 600;
+}
+
+#balehu_marketplace_tab {
+	width: 100%;
+	/*height: 350px;*/
+}
+
+.inline-list {
+	display: flex;
+    list-style: none;
+    color: #424242;
+    font-size: 14px;
+    font-weight: 600;
+
+    li {
+    	display: flex;
+    	align-items: center;
+    	padding: 15px;
+    }
+
+    .circle-i-color {
+    	width: 10px;
+    	height: 10px;
+    	border-radius: 50% !important;
+    	background: red;
+    	margin-right: 10px;
+    }
+}
+
+.tab-pane .inline-list {
+	float: right;
+	clear: right;
+	margin-right: 35px;
+}
+

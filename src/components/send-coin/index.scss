@@ -40,9 +40,14 @@
 
 	.unit-price { 
 		float: right;
-	    margin-right: 84px;
+	    margin-right: 20px;
+	    margin-bottom: 15px;
 	    color: #424242;
 	    font-size: 12px;
 	    font-weight: 600;
+	}
+
+	.amount-label {
+		margin-top: 34px;
 	}
 }
