@@ -530,67 +530,6 @@ class CreatePromotion extends React.Component {
                             </div>
                           </div>
                         </section>
-                        <hr className="line-break" />
-                        <section className="social-share">
-                          <div className="row row-item">
-                            <div className="form-group">
-                              <label className="col-md-3 control-label single-label">Share on</label>
-                              <div className="col-md-9">
-                                <div className="mt-checkbox-list">
-                                  <label className="mt-checkbox">
-                                    <input type="checkbox" id="facebookCheck" value="option1" />
-                                    <i className="fa fa-lg fa-facebook-official"></i>
-                                    <label className="check-right-label">SocialAccunt</label>
-                                    <span></span>
-                                  </label>
-                                  <label className="mt-checkbox">
-                                    <input type="checkbox" id="twitterCheck" value="option1" />
-                                    <i className="fa fa-lg fa-twitter"></i>
-                                    <label className="check-right-label">SocialAccunt</label>
-                                    <span></span>
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="row row-item">
-                            <div className="form-group">
-                              <label className="col-md-3 control-label single-label">Share time</label>
-                              <div className="col-md-9">
-                                <div className="mt-radio-list">
-                                  <label className="mt-radio"> Share now
-                                    <input 
-                                      type="radio" 
-                                      value="1" 
-                                      name="socialShareState"  
-                                      onClick={() => this._changeShareState(true)}
-                                      defaultChecked />
-                                    <span></span>
-                                  </label>
-                                  <label className="mt-radio"> Schedule for later
-                                    <input 
-                                      type="radio" 
-                                      value="1" 
-                                      onClick={() => this._changeShareState(false)}
-                                      name="socialShareState" />
-                                    <span></span>
-                                  </label>
-                                </div>
-                                {
-                                  !this.state.shareState
-                                    ? <DateTime
-                                        value={this.state.shareSocaialHour}
-                                        timeFormat={TIME_FORMAT}
-                                        input={true}
-                                        className="schedulePauseInput"
-                                        onChange={(e)=> this.setState({shareSocaialHour: e.format(TIME_FORMAT)})}
-                                        disableOnClickOutside={false} />
-                                    : null
-                                }                                
-                              </div>
-                            </div>
-                          </div>
-                        </section>
                       </div>
                       <div className="promotion-footer">
                         <div className="footer-btn-wrapper">

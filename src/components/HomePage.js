@@ -7,6 +7,7 @@ import EditPromotion from './EditPromotion';
 import SendCoin from './send-coin';
 import ReceiveCoin from './receive-coin';
 import TransferGift from './transfer-gift';
+import EdityLoyalty from './edit-loyalty';
 import Header from './header';
 import { changePromotionStatus } from '../actions/promotion';
 
@@ -144,9 +145,9 @@ class HomePage extends React.Component {
         }
       }
 
-      if (data.shareState == false) {
-        scheduledPromotions.push(data);
-      }
+      // if (data.shareState == false) {
+      //   scheduledPromotions.push(data);
+      // }
     })
 
     return (
@@ -223,46 +224,30 @@ class HomePage extends React.Component {
                         </div>
                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                           <div className="portlet light portlet-fit custom-portlet auto-full">
-                            <div className="portlet-inner">
-                              <div className="portlet_title">Social Networks</div>
-                              <div className="social-panel">
-                                <span className="social-icon-wrapper"><i className="fa fa-facebook-official"></i></span>
-                                <span className="item-label">Facebook</span>
-                                <button type="button" className="btn btn-circle white btn-sm flex-right">Add account</button>
-                              </div>
-                              <div className="">
-                                <div className="form-group form-md-line-input no-bottom">
-                                    <div className="input-icon right">
-                                        <input type="text" className="form-control" placeholder="French Cuisine" />
-                                        <i className="fa fa-close"></i>
-                                    </div>
+                            <div className="portlet-inner" id="royalty-edit">
+                              <div className="portlet_title">Loyalty Rewards</div>
+                              <div className="reward-item">
+                                <div className="social-panel">
+                                  <span className="item-label">Rewards1</span>
+                                  <EdityLoyalty />
                                 </div>
-                              </div>
-                              <div className="">
-                                <div className="form-group form-md-line-input">
-                                    <div className="input-icon right">
-                                        <input type="text" className="form-control" placeholder="French Breakfast" />
-                                        <i className="fa fa-close"></i>
-                                    </div>
+                                <div className="form-group form-md-line-input item-bottom-height">
+                                  <label htmlFor="form_control_1" className="color-lightgrey">For $1000 USD spent</label>
+                                  <label htmlFor="form_control_1" className="color-lightgrey">Reward with 100 Balehu Coins</label>
                                 </div>
+                                <hr className="break-line" />
                               </div>
-                              <div className="social-panel">
-                                <span className="social-icon-wrapper"><i className="fa fa-twitter"></i></span>
-                                <span className="item-label">Twitter</span>
-                                <button type="button" className="btn btn-circle white btn-sm flex-right">Add account</button>
-                              </div>
-                              <div className="">
-                                <div className="form-group form-md-line-input">
-                                    <div className="input-icon right">
-                                        <input type="text" className="form-control" placeholder="French Cuisine" />
-                                        <i className="fa fa-close"></i>
-                                    </div>
+                              
+                              <div className="reward-item">
+                                <div className="social-panel">
+                                  <span className="item-label">Rewards2</span>
+                                  <EdityLoyalty />
                                 </div>
-                              </div>
-                              <div className="social-panel">
-                                <span className="social-icon-wrapper"><i className="fa fa-instagram"></i></span>
-                                <span className="item-label">Instagram</span>
-                                <button type="button" className="btn btn-circle white btn-sm flex-right">Add account</button>
+                                 <div className="form-group form-md-line-input item-bottom-height">
+                                  <label htmlFor="form_control_1" className="color-lightgrey">For $1000 USD spent</label>
+                                  <label htmlFor="form_control_1" className="color-lightgrey">Reward with 100 Balehu Coins</label>
+                                </div>
+                                <hr className="break-line" />
                               </div>
                             </div>
                           </div>
@@ -312,9 +297,6 @@ class HomePage extends React.Component {
                                 </li>
                                 <li>
                                   <a href="#paused_tab" data-toggle="tab"> Paused </a>
-                                </li>
-                                <li>
-                                  <a href="#scheduled_tab" data-toggle="tab"> Scheduled </a>
                                 </li>
                               </ul>
                             </div>
@@ -383,43 +365,6 @@ class HomePage extends React.Component {
                                             <strong>Active</strong>
                                             <div 
                                               className={ data.status ? "custom-switch" : "custom-switch inactive" }
-                                              onClick={() => this._changeStatus(data, true)}
-                                              >
-                                              <div className="ring"></div>
-                                            </div>
-                                          </div>
-                                          <div className="m-t-15">
-                                            <EditPromotion data={data} />
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )
-                                  })
-                                }
-                                </div>
-                                <div className="tab-pane" id="scheduled_tab">
-                                {
-                                  scheduledPromotions.map((data) => {
-                                    return (
-                                      <div className="item">
-                                        <div className="item-avatar">
-                                          <img src="styles/assets/pages/img/sample.png" className="" />
-                                        </div>
-                                        <div className="item-description">
-                                          <strong>{data.title}</strong>
-                                          <span dangerouslySetInnerHTML={{__html: data.details }}></span>
-                                        </div>
-                                        <div className="item-btn">
-                                          <button 
-                                            type="button" 
-                                            onClick={() => this._doAnalytics(data.id)}
-                                            className="btn btn-circle white btn-lg">Analytics</button>
-                                        </div>
-                                        <div className="item-switch">
-                                          <div className="flex-box">
-                                            <strong>Active</strong>
-                                            <div 
-                                              className="custom-switch"
                                               onClick={() => this._changeStatus(data, true)}
                                               >
                                               <div className="ring"></div>

@@ -2,7 +2,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 import QrReader from 'react-qr-reader'
 import { withRouter, NavLink } from 'react-router-dom';
-import './index.scss';
 
 
 class SendCoin extends React.Component {
@@ -40,9 +39,9 @@ class SendCoin extends React.Component {
 
   render() {
     return (
-      <section>
+      <section id="common-modal">
         <a className="btn btn-circle white btn-lg bg-darkgreen send-coin" data-toggle="modal" href="#sendcoin"> Send Coins </a>
-        <div id="sendcoin" className="modal container fade" tabIndex="-1" data-width="700">
+        <div id="sendcoin" className="modal container common-modal fade" tabIndex="-1" data-width="700">
           <div className="modal-header">
             <h4 className="modal-title">Send Coins</h4>
             <span className="close" data-dismiss="modal" aria-hidden="true"><i className="fa fa-close"></i></span>
@@ -88,7 +87,8 @@ class SendCoin extends React.Component {
               <div className="form-group">
                 <label className="col-md-2 control-label single-label amount-label">Amount</label>
                 <div className="col-md-10">
-                  <input type="text" className="form-control" placeholder="123 6th St. 32904" />
+                  <input type="text" className="form-control" placeholder="0 BAL" />
+                  <span className="usd-val"></span>
                 </div>
               </div>
             </div>
